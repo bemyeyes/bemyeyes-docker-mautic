@@ -54,12 +54,15 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
 RUN echo "memory_limit = -1" > /usr/local/etc/php/php.ini
 
 # Define Mautic version by package tag
-ARG MAUTIC_VERSION=5.x-dev
+ARG MAUTIC_VERSION=5.1.0
 
 RUN cd /opt && \
     COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_PROCESS_TIMEOUT=10000 composer create-project mautic/recommended-project:${MAUTIC_VERSION} mautic --no-interaction && \
     rm -rf /opt/mautic/var/cache/js && \
     find /opt/mautic/node_modules -mindepth 1 -maxdepth 1 -not \( -name 'jquery' -or -name 'vimeo-froogaloop2' \) | xargs rm -rf
+
+RUN cd /opt/mautic && \
+    COMPOSER_ALLOW_SUPERUSER=1 composer require pabloveintimilla/mautic-amazon-ses
 
 FROM php:8.1-apache
 

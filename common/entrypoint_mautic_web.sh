@@ -42,5 +42,9 @@ if [ "$DOCKER_MAUTIC_RUN_MIGRATIONS" = "true" ]; then
 	su -s /bin/bash www-data -c 'php /var/www/html/bin/console doctrine:migration:migrate -n'
 fi
 
+# Needed to finish the AWS SES plugin installation (started in Dockerfile)
+php /var/www/html/bin/console cache:clear
+php /var/www/html/bin/console mautic:plugins:reload
+
 # execute the provided entrypoint
 "$@"
