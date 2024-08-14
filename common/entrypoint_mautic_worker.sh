@@ -10,4 +10,7 @@ done
 php /var/www/html/bin/console cache:clear
 php /var/www/html/bin/console mautic:plugins:reload
 
+# Fix permissions (ilkkao)
+chmod 777 /var/www/html/var/cache/prod/jms_serializer_default
+
 supervisord -c /etc/supervisor/conf.d/supervisord.conf

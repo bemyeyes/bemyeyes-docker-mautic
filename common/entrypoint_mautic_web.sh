@@ -46,5 +46,8 @@ fi
 php /var/www/html/bin/console cache:clear
 php /var/www/html/bin/console mautic:plugins:reload
 
+# Fix permissions (ilkkao)
+chmod 777 /var/www/html/var/cache/prod/jms_serializer_default
+
 # execute the provided entrypoint
 "$@"
