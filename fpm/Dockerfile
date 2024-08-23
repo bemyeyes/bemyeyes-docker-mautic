@@ -61,6 +61,10 @@ RUN cd /opt && \
     rm -rf /opt/mautic/var/cache/js && \
     find /opt/mautic/node_modules -mindepth 1 -maxdepth 1 -not \( -name 'jquery' -or -name 'vimeo-froogaloop2' \) | xargs rm -rf
 
+COPY ./bme-patches /bme-patches
+RUN cd /opt/mautic/docroot && \
+    patch -s -p1 < /bme-patches/0001-Use-Be-My-Eyes-unsubscribe-URL.patch
+
 RUN cd /opt/mautic && \
     COMPOSER_ALLOW_SUPERUSER=1 composer require pabloveintimilla/mautic-amazon-ses
 

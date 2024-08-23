@@ -1,0 +1,61 @@
+From f6d2fe9468ae448432239535837db22ca8971667 Mon Sep 17 00:00:00 2001
+From: Ilkka Oksanen <iao@iki.fi>
+Date: Fri, 23 Aug 2024 22:04:28 +0300
+Subject: [PATCH] Use Be My Eyes unsubscribe URL
+
+---
+ app/bundles/EmailBundle/Helper/MailHelper.php | 35 ++++++-------------
+ 1 file changed, 11 insertions(+), 24 deletions(-)
+
+diff --git a/app/bundles/EmailBundle/Helper/MailHelper.php b/app/bundles/EmailBundle/Helper/MailHelper.php
+index fe35c0fd86..d401daced4 100644
+--- a/app/bundles/EmailBundle/Helper/MailHelper.php
++++ b/app/bundles/EmailBundle/Helper/MailHelper.php
+@@ -1346,33 +1346,20 @@ class MailHelper
+      */
+     private function getUnsubscribeHeader()
+     {
+-        if ($this->idHash) {
+-            $lead    = $this->getLead();
+-            $toEmail = null;
+-            if (is_array($lead) && array_key_exists('email', $lead) && is_string($lead['email'])) {
+-                $toEmail = $lead['email'];
+-            } elseif ($lead instanceof Lead && is_string($lead->getEmail())) {
+-                $toEmail = $lead->getEmail();
+-            }
+-
+-            if ($toEmail) {
+-                $unsubscribeHash = $this->mailHashHelper->getEmailHash($toEmail);
+-                $url             = $this->router->generate('mautic_email_unsubscribe',
+-                    ['idHash' => $this->idHash, 'urlEmail' => $toEmail, 'secretHash' => $unsubscribeHash],
+-                    UrlGeneratorInterface::ABSOLUTE_URL
+-                );
+-            } else {
+-                $url             = $this->router->generate('mautic_email_unsubscribe',
+-                    ['idHash' => $this->idHash],
+-                    UrlGeneratorInterface::ABSOLUTE_URL
+-                );
+-            }
++        $lead    = $this->getLead();
++        $toEmail = null;
+ 
+-            return "<$url>";
++        if (is_array($lead) && array_key_exists('email', $lead) && is_string($lead['email'])) {
++            $toEmail = $lead['email'];
++        } elseif ($lead instanceof Lead && is_string($lead->getEmail())) {
++            $toEmail = $lead->getEmail();
+         }
+ 
+-        if (!empty($this->queuedRecipients) || !empty($this->lead)) {
+-            return '<{unsubscribe_url}>';
++        if ($toEmail) {
++            $toEmailParam = rawurlencode($toEmail);
++            $lead_id = $lead instanceof Lead ? $lead->getId() : null;
++            $url = "https://api.bemyeyes.com/mail/en/subscribe?email=$toEmailParam&nonce=$lead_id&action=unsubscribe&category=marketing";
++            return "<$url>";
+         }
+ 
+         return false;
+-- 
+2.46.0
+
