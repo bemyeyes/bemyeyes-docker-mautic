@@ -38,6 +38,8 @@ php /var/www/html/bin/console mautic:plugins:reload
 
 # Fix permissions (ilkkao)
 chmod 777 /var/www/html/var/cache/prod/jms_serializer_default
+mkdir -p /var/www/html/var/tmp/twig/
+chmod 777 /var/www/html/var/tmp/twig/
 
 # run cron and print the output
 cron -f | tail -f /tmp/stdout
