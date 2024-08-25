@@ -1,0 +1,31 @@
+From c9215eeef2412ca6b40d315f3a0ab32573e35871 Mon Sep 17 00:00:00 2001
+From: Ilkka Oksanen <iao@iki.fi>
+Date: Sun, 25 Aug 2024 18:49:03 +0300
+Subject: [PATCH] Use Be My Eyes unsubscribe URL
+
+---
+ .../EmailBundle/EventListener/BuilderSubscriber.php       | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/app/bundles/EmailBundle/EventListener/BuilderSubscriber.php b/app/bundles/EmailBundle/EventListener/BuilderSubscriber.php
+index 8301379cc1..1a5c5705cd 100644
+--- a/app/bundles/EmailBundle/EventListener/BuilderSubscriber.php
++++ b/app/bundles/EmailBundle/EventListener/BuilderSubscriber.php
+@@ -276,8 +276,12 @@ class BuilderSubscriber implements EventSubscriberInterface
+         // We will replace tokens in unsubscribe text too
+         $unsubscribeText = \Mautic\LeadBundle\Helper\TokenHelper::findLeadTokens($unsubscribeText, $lead, true);
+         $unsubscribeText = str_replace('|URL|', $this->emailModel->buildUrl('mautic_email_unsubscribe', ['idHash' => $idHash, 'urlEmail' => $toEmail, 'secretHash' => $unsubscribeHash]), $unsubscribeText);
+-        $event->addToken('{unsubscribe_text}', EmojiHelper::toHtml($unsubscribeText));
+-        $event->addToken('{unsubscribe_url}', $this->emailModel->buildUrl('mautic_email_unsubscribe', ['idHash' => $idHash, 'urlEmail' => $toEmail, 'secretHash' => $unsubscribeHash]));
++        $event->addToken('{unsubscribe_text}', '');
++
++        $lead_id = $lead instanceof Lead ? $lead->getId() : null;
++        $toEmailParam = rawurlencode($toEmail);
++        $url = "https://api.bemyeyes.com/mail/en/subscribe?email=$toEmailParam&nonce=$lead_id&action=unsubscribe&category=marketing";
++        $event->addToken('{unsubscribe_url}', $url);
+ 
+         $webviewText = $this->coreParametersHelper->get('webview_text');
+         if (!$webviewText) {
+-- 
+2.46.0
+

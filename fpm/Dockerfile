@@ -63,7 +63,8 @@ RUN cd /opt && \
 
 COPY ./bme-patches /bme-patches
 RUN cd /opt/mautic/docroot && \
-    patch -s -p1 < /bme-patches/0001-Use-Be-My-Eyes-unsubscribe-URL.patch
+    patch -s -p1 < /bme-patches/0001-Use-Be-My-Eyes-unsubscribe-URL.patch && \
+    patch -s -p1 < /bme-patches/0002-Use-Be-My-Eyes-unsubscribe-URL.patch
 
 RUN cd /opt/mautic && \
     COMPOSER_ALLOW_SUPERUSER=1 composer require pabloveintimilla/mautic-amazon-ses
