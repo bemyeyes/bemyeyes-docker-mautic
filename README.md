@@ -4,6 +4,17 @@ See the original README [here](README.original.md).
 
 This image e.g. installs the AWS SES plugin. Check the latest commits to see what custom patches we have.
 
+## Patches
+
+Be My Eyes Mautic is patches in two ways:
+
+- By editing the Dockerfiles (apache and fpm) in this repository.
+- By Editing Mautic source code and producting patch files with `git format-patch`. These patch files are applied during the image build phase.
+
+#### Why old style patch files are used instead of making a local bme fork of the mautic git repository?
+
+When the patches are kept minimal they most likely apply to future versions of Mautic too. This means updating Mautic doesn't become hard. With patch files it can be still done by just changing the MAUTIC_VERSION in the dockerfile.
+
 ## New image building
 
 Login (if necessary):
